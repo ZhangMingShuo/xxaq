@@ -1,10 +1,15 @@
-public class Main {
+public class totest {
     static String ming="abcdefghijklmnop";
     static String key="0123456789abcdef";
     static long w[]=new long[44];
     static long sp=1;
     static int rconi=0;
-    static int m[][]= new int [4][4];
+    static int m[][]= {
+            {0x32,0x88,0x31,0xe0},
+            {0x43,0x5a,0x31,0x37},
+            {0xf6,0x30,0x98,0x07},
+            {0xa8,0x8d,0xa2,0x34},
+    };
 
     static int mul[][]={{2,3,1,1},{1,2,3,1},{1,1,2,3},{3,1,1,2}};
     static int rcon[]={
@@ -42,14 +47,23 @@ public class Main {
         for(int i=0;i<32;++i)
             sp=sp*2;
         sp--;
-        init();
+        w[0]=0x2b7e1516;
+        w[1]=0x28aed2a6;
+        w[2]=0xabf71588;
+        w[3]=0x09cf4f3c;
         for(int i=0;i<4;++i)
             w[i]&=sp;
+
+        init();
+
+//        for(int i=0;i<44;++i)
+//            showw(w[i]);
 
         //System.out.println("--------------------");
         int keyi = 0;
         m = AddRoundKey(m, keyi);
         keyi++;
+       // showm();
         for(int i=0;i<9;++i) {
             m = SubByte(m);//正确
             showm();
@@ -79,28 +93,6 @@ public class Main {
             }
         }
 
-        byte b2[]=ming.getBytes();//ming是128位明文 m为其矩阵
-//将明文放入矩阵
-        for(int i=0;i<4;++i)
-        {
-            for(int j=0;j<4;++j){
-                m[i][j]=toint(b2[i+j*4]);
-            }
-        }
-        //处理出w0-w3//待测
-        byte b[]=(key.getBytes());
-        w[0]=toint(b[0]);
-        for(int i=1;i<=3;++i)
-            w[0]=(w[0]<<8)+toint(b[i]);
-        w[1]=toint((b[4]));
-        for(int i=5;i<=7;++i)
-            w[1]=(w[1]<<8)+toint(b[i]);
-        w[2]=toint((b[8]));
-        for(int i=9;i<=11;++i)
-            w[2]=(w[2]<<8)+toint(b[i]);
-        w[3]=toint((b[12]));
-        for(int i=13;i<=15;++i)
-            w[3]=(w[3]<<8)+toint(b[i]);
 
         for(int i=4;i<44;++i)
         {
@@ -127,7 +119,7 @@ public class Main {
         rt=((rt<<8)^subbyte(temp));
         temp= (int) (a&0xff);
         rt=((rt<<8)^subbyte(temp));
-        //showw(rt);
+       //showw(rt);
         return (rt&sp)^rcon[rconi];//////////////////
     }
     static long subbyte(int a){
@@ -243,17 +235,15 @@ public class Main {
     }
     static int[][] AddRoundKey(int m[][],int keyi){
         int rt[][]=new int[4][4];
-        // System.out.println("m :"+Integer.toHexString(m[0][0])+" "+Integer.toHexString(m[1][0])+" "+Integer.toHexString(m[2][0])+" "+Integer.toHexString(m[3][0]));
+       // System.out.println("m :"+Integer.toHexString(m[0][0])+" "+Integer.toHexString(m[1][0])+" "+Integer.toHexString(m[2][0])+" "+Integer.toHexString(m[3][0]));
         for(int i=0;i<4;++i) {
             rt[0][i] = (int) (m[0][i] ^ (w[4*keyi+i] >> 24));
             rt[1][i] = (int) ((m[1][i] ^ ((w[4*keyi+i] >> 16)) & 0xff));
             rt[2][i] = (int) ((m[2][i] ^ ((w[4*keyi+i] >> 8)) & 0xff));
             rt[3][i] = (int) (m[3][i] ^ (w[4*keyi+i] & 0xff));
         }
-        // System.out.println("rt:"+Integer.toHexString(rt[0][0])+" "+Integer.toHexString(rt[1][0])+" "+Integer.toHexString(rt[2][0])+" "+Integer.toHexString(rt[3][0]));
+       // System.out.println("rt:"+Integer.toHexString(rt[0][0])+" "+Integer.toHexString(rt[1][0])+" "+Integer.toHexString(rt[2][0])+" "+Integer.toHexString(rt[3][0]));
 
         return rt;
     }
 }
-
-
